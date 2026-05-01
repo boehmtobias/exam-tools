@@ -3,7 +3,9 @@ import streamlit as st
 from utils.get_gitlab_user import get_gitlab_user
 
 
-def gitlab_config():
+def gitlab_config() -> bool:
+    auth_is_valid = False
+
     if "gitlab_base_url" not in st.session_state:
         st.session_state.gitlab_base_url = "https://gitlab.rlp.net/api/v4"
     if "gitlab_token" not in st.session_state:
@@ -30,8 +32,10 @@ def gitlab_config():
     if st.session_state.gitlab_base_url and st.session_state.gitlab_token:
         request_result = get_gitlab_user(st.session_state.gitlab_base_url, st.session_state.gitlab_token)
 
-        if request_result:
-            if request_result["status"] == "success":
-                st.success(f"Authenticated as user:&nbsp; **`{request_result['username']}`**")
-            else:
-                st.error(request_result["message"])
+        if request_result and request_result["status"] == "success":
+            st.success(f"Authenticated as user:&nbsp; **`{request_result['username']}`**")
+            auth_is_valid = True
+        elif request_result:
+            st.error(request_result["message"])
+
+    return auth_is_valid
