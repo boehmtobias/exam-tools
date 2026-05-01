@@ -3,7 +3,6 @@ import streamlit as st
 st.set_page_config(page_title="ExamUtils", page_icon="🎓")
 
 st.title("ExamUtils")
-st.sidebar.header("ExamUtils")
 st.write("A collection of utilities for portfolio exams.")
 
 col1, col2, col3 = st.columns(3, border=True)
@@ -22,7 +21,6 @@ with col3:
     st.markdown("#### 💾 Export GitLab Projects")
     st.write("Download and export GitLab projects from your namespaces and groups.")
     st.page_link("pages/3_💾_ExportGitLabProjects.py", label="Open →")
-
 
 col4, col5, _ = st.columns(3)
 
