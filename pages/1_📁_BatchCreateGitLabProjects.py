@@ -2,6 +2,7 @@ from typing import Any, Dict
 import streamlit as st
 
 from utils.get_gitlab_namespaces import get_gitlab_namespaces
+from utils.get_gitlab_project_slug import get_gitlab_project_slug
 from utils.gitlab_config import gitlab_config
 
 st.set_page_config(page_title="ExamTools", page_icon="🎓")
@@ -47,7 +48,10 @@ if is_authenticated:
         namespaces = ns_result["data"]
 
         if namespaces:
-            ns_options = {n["name"]: n["id"] for n in namespaces}
+            ns_options = {
+                n["name"]: n["id"]
+                for n in sorted(namespaces, key=lambda x: x["name"].lower())
+            }
 
             col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 
@@ -113,4 +117,36 @@ project_raw_data = st.text_area("Input project names and slugs",
 parsed_projects = []
 
 if project_raw_data:
-    pass
+    lines = [line.strip() for line in project_raw_data.split('\n') if line.strip()]
+
+    for line in lines:
+        parts = line.split(',', 1)
+
+        project_name = parts[0].strip()
+
+        if len(parts) > 1 and parts[1].strip():
+            # Slug provided, ensure compatibility with GitLab slugs
+            project_slug = get_gitlab_project_slug(parts[1].strip())
+        else:
+            # No slug provided, so generate from name
+            project_slug = get_gitlab_project_slug(project_name)
+
+        parsed_projects.append({"name": project_name, "slug": project_slug})
+
+    if parsed_projects:
+        st.markdown(f"**`{len(parsed_projects)}`** projects detected.")
+
+        all_slugs = [p["slug"] for p in parsed_projects]
+        has_duplicates = len(all_slugs) != len(set(all_slugs))
+
+        has_empty = any(not p["slug"] for p in parsed_projects)
+
+        if has_duplicates:
+            st.error(
+                "Duplicate slugs detected: Multiple entries result in the same URL path. GitLab requires unique slugs.")
+
+        if has_empty:
+            st.warning("⚠️ Empty Slugs:** One or more projects resulted in an empty slug. Please check your naming.")
+
+        if not has_duplicates and not has_empty:
+            pass

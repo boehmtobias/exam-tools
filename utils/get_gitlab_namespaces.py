@@ -19,6 +19,7 @@ def get_gitlab_namespaces(url: str, token: str):
             try:
                 data = response.json()
                 namespaces = [{"name": g["full_path"], "id": g["id"]} for g in data]
+
                 return {"status": "success", "data": namespaces}
             except ValueError:
                 return {"status": "error", "message": "Value error: Server failed to return JSON."}
