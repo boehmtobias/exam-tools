@@ -4,7 +4,17 @@ import streamlit as st
 from utils.get_gitlab_namespaces import get_gitlab_namespaces
 from utils.gitlab_config import gitlab_config
 
-st.set_page_config(page_title="BatchCreateGitLabProjects", page_icon="📁")
+st.set_page_config(page_title="ExamTools", page_icon="🎓")
+st.markdown(
+    """
+    <style>
+    textarea {
+        font-family: 'Source Code Pro', 'Monaco', 'Cascadia Code', 'Ubuntu Mono', monospace !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.title("Batch Create GitLab Projects")
 st.sidebar.header("BatchCreateGitLabProjects")
@@ -23,7 +33,9 @@ if lock_ui:
     st.info(
         "**Authentication Required:** Please provide valid configuration above to proceed.")
 
-st.write("### Select Namespace")
+st.write("### Destination Namespace")
+
+ns_selected_name = None
 
 if is_authenticated:
     ns_result = get_gitlab_namespaces(
@@ -37,7 +49,7 @@ if is_authenticated:
         if namespaces:
             ns_options = {n["name"]: n["id"] for n in namespaces}
 
-            col1, col2 = st.columns([5, 1], vertical_alignment="bottom")
+            col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 
             with col1:
                 ns_selected_name = st.selectbox(
@@ -48,7 +60,7 @@ if is_authenticated:
                 )
 
             with col2:
-                if st.button("Refresh List"):
+                if st.button("Refresh"):
                     get_gitlab_namespaces.clear()
                     st.session_state["_namespaces_refreshed"] = True
                     st.rerun()
@@ -56,10 +68,13 @@ if is_authenticated:
             if ns_selected_name:
                 ns_selected_id = ns_options[ns_selected_name]
 
+                base_web_url = st.session_state.gitlab_base_url.replace("/api/v4", "").rstrip('/')
+                ns_selected_hyperlink = f"{base_web_url}/{ns_selected_name}"
+
                 target_ns_table = f"""
-                | Target group name | Target group ID |
-                | :--- | :--- |
-                | `{ns_selected_name}` | `{ns_selected_id}` |
+                | Target group name | Target group ID | Open in GitLab |
+                | :--- | :--- | :--- |
+                | `{ns_selected_name}` | `{ns_selected_id}` | [{ns_selected_hyperlink}]({ns_selected_hyperlink}) |
                 """
 
                 st.markdown(target_ns_table)
@@ -72,13 +87,30 @@ if is_authenticated:
         st.error(f"Failed to load namespaces: {ns_result['message']}")
 
 else:
-    col1, col2 = st.columns([5, 1], vertical_alignment="bottom")
+    col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
 
     with col1:
-        st.selectbox("Select Target Namespace/Group",
+        st.selectbox("Target namespace/group",
                      index=None,
                      options=[],
                      help="Showing groups where you are allowed to create projects (needs at least Developer access).",
                      disabled=True)
         with col2:
-            st.button("Refresh List", disabled=True)
+            st.button("Refresh", disabled=True)
+
+st.write("### Projects to Create")
+
+init_empty = st.checkbox("Initialize empty repository (without README)",
+                         value=True,
+                         disabled=(ns_selected_name is None))
+
+project_raw_data = st.text_area("Input project names and slugs",
+                                placeholder="First Project, first-project\nSecondProject, custom-slug\nThirdProject",
+                                help="Entry format: project name, project slug (optional, generated from name if omitted).",
+                                height=250,
+                                disabled=(ns_selected_name is None))
+
+parsed_projects = []
+
+if project_raw_data:
+    pass
