@@ -1,6 +1,10 @@
 import streamlit as st
 from utils.gitlab_config import gitlab_config
-st.set_page_config(page_title="LLMIssueFeedback", page_icon="💬")
+
+st.set_page_config(
+    page_title="ExamTools",
+    page_icon="🎓",
+    initial_sidebar_state="collapsed")
 
 st.title("LLM Issue Feedback")
 st.sidebar.header("LLMIssueFeedback")
