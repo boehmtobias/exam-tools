@@ -1,0 +1,10 @@
+services:
+  exam-tools:
+    build: .
+    ports:
+      - "6767:6767"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:6767/_stcore/health"]
+      interval: 2m
+      timeout: 10s
+      retries: 3
