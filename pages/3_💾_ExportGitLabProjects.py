@@ -22,23 +22,31 @@ st.write("### Namespace Selection")
 
 if "ns_count" not in st.session_state:
     st.session_state.ns_count = 1
+if "ns_removed" not in st.session_state:
+    st.session_state.ns_removed = set()
 
 ns_selections = []
 already_selected = []
 
 for i in range(st.session_state.ns_count):
+    if i in st.session_state.ns_removed:
+        continue
     with st.container(border=True):
         st.write(f"#### Target Namespace {i + 1}")
         ns = namespace_selection(is_auth=is_authenticated, key=i, exclude=already_selected)
+        if i != 0 and st.button("❌", key=f"ns_remove_{i}"):
+            st.session_state.ns_removed.add(i)
+            st.rerun()
     ns_selections.append(ns)
     if ns["name"] and ns["name"] not in already_selected:
         already_selected.append(ns["name"])
 
-if st.button("➕ Add Another"):
+if st.button("➕ Add Another", disabled=not is_authenticated):
     st.session_state.ns_count += 1
     st.rerun()
 
 st.write("### Download")
+st.write("Exports all branches for all projects/repositories within the selected namespaces.")
 
 active_selections = [ns for ns in ns_selections if ns["id"]]
 has_selections = bool(active_selections)
@@ -71,7 +79,7 @@ if "prepared_zips" in st.session_state and st.session_state.prepared_zips:
                     st.write(f"##### **{ns_name}**")
                     st.write(
                         f"📝 Filename: **`{info['filename']}`**  \n"
-                        f"📂 Amount: **`{info['project_count']}` projects**  \n"
+                        f"📂 Amount: **`{info['project_count']} projects`**  \n"
                         f"💾 Download Size: **`{format_zip_size(info['size'])}`**"
                     )
                     st.download_button(

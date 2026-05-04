@@ -50,7 +50,7 @@ def namespace_selection(is_auth: bool, key: int = 0, exclude: list = None) -> di
                     ns_selected_hyperlink = f"{base_web_url}/{ns_selected_name}"
 
                     target_ns_table = f"""
-                    | Target group name | Target group ID | Open in GitLab |
+                    | Group name | Group ID | Open in GitLab |
                     | :--- | :--- | :--- |
                     | `{ns_selected_name}` | `{ns_selected_id}` | [{ns_selected_hyperlink}]({ns_selected_hyperlink}) |
                     """
