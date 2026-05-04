@@ -3,10 +3,12 @@ import streamlit as st
 from utils.get_gitlab_namespaces import get_gitlab_namespaces
 
 
-def namespace_selection(is_auth: bool) -> dict:
+def namespace_selection(is_auth: bool, key: int = 0, exclude: list = None) -> dict:
     ns_selected_name = None
     ns_selected_id = None
     ns_selected_hyperlink = None
+    if exclude is None:
+        exclude = []
 
     if is_auth:
         ns_result = get_gitlab_namespaces(
@@ -21,6 +23,7 @@ def namespace_selection(is_auth: bool) -> dict:
                 ns_options = {
                     n["name"]: n["id"]
                     for n in sorted(namespaces, key=lambda x: x["name"].lower())
+                    if n["name"] not in exclude
                 }
 
                 col1, col2 = st.columns([2, 1], vertical_alignment="bottom")
@@ -30,11 +33,12 @@ def namespace_selection(is_auth: bool) -> dict:
                         "Select target namespace/group",
                         index=None,
                         options=list(ns_options.keys()),
-                        help="Showing groups where you are allowed to create projects (needs at least Developer access)."
+                        help="Showing groups where you are allowed to create projects (needs at least Developer access).",
+                        key=f"ns_selectbox_{key}"
                     )
 
                 with col2:
-                    if st.button("Refresh"):
+                    if st.button("Refresh", key=f"ns_refresh_{key}"):
                         get_gitlab_namespaces.clear()
                         st.session_state["_namespaces_refreshed"] = True
                         st.rerun()
@@ -68,9 +72,13 @@ def namespace_selection(is_auth: bool) -> dict:
                          index=None,
                          options=[],
                          help="Showing groups where you are allowed to create projects (needs at least Developer access).",
-                         disabled=True)
-            with col2:
-                st.button("Refresh", disabled=True)
+                         disabled=True,
+                         key=f"ns_selectbox_{key}")
+
+        with col2:
+            st.button("Refresh",
+                      disabled=True,
+                      key=f"ns_refresh_{key}")
 
     ns_selection = {"name": ns_selected_name, "id": ns_selected_id, "hyperlink": ns_selected_hyperlink}
 
