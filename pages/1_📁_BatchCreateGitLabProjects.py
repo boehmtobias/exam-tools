@@ -38,7 +38,7 @@ lock_ui = not is_authenticated
 #     st.info(
 #         "**Authentication Required:** Please provide valid configuration above to proceed.")
 
-st.write("### Destination Namespace")
+st.write("### Namespace Selection")
 
 ns_selected_name = None
 
@@ -106,7 +106,7 @@ else:
         with col2:
             st.button("Refresh", disabled=True)
 
-st.write("### Projects to Create")
+st.write("### Project Creation")
 
 init_empty = st.checkbox("Initialize empty repository (without README)",
                          value=True,
