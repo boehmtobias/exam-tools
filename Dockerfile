@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/* \
 
-RUN git clone https://gitlab.com/youruser/exam-tools.git .
+RUN git clone https://github.com/boehmtobias/exam-tools.git .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
