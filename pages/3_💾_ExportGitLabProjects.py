@@ -2,11 +2,11 @@ import streamlit as st
 
 from utils.build_namespace_zip import build_namespace_zip
 from utils.build_zip_filename import build_zip_filename
-from utils.fetch_notifications import fetch_notifications
+from widgets.fetch_notifications import fetch_notifications
 from utils.format_zip_size import format_zip_size
-from utils.gitlab_config import gitlab_config
-from utils.namespace_selection import namespace_selection
-from utils.page_preamble import page_preamble
+from widgets.gitlab_config import gitlab_config
+from widgets.namespace_selection import namespace_selection
+from widgets.page_preamble import page_preamble
 
 page_preamble()
 fetch_notifications()
