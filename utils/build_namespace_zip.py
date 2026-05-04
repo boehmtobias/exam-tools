@@ -47,11 +47,13 @@ def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int
         for i, project in enumerate(repos):
             repo_name = project["path"]
             project_id = project["id"]
+            project_count += 1
 
             branches = get_project_branches(base_url, token, project_id)
 
             if not branches:
                 progress.progress((i + 1) / len(repos), text=f"Skipping `{repo_name}` (no branches)...")
+                master_zip.writestr(f"{repo_name}/.empty", "")
                 continue
 
             for branch in branches:
@@ -78,8 +80,6 @@ def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int
 
                         target_path = f"{repo_name}/{branch_name}/{inner_path}"
                         master_zip.writestr(target_path, branch_zip.read(entry))
-
-            project_count += 1
 
     progress.empty()
     master_buffer.seek(0)
