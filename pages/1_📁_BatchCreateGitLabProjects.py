@@ -4,35 +4,17 @@ from utils.fetch_notifications import fetch_notifications
 from utils.get_gitlab_project_slug import get_gitlab_project_slug
 from utils.gitlab_config import gitlab_config
 from utils.namespace_selection import namespace_selection
+from utils.page_preamble import page_preamble
 
-st.set_page_config(
-    page_title="ExamTools",
-    page_icon="🎓",
-    initial_sidebar_state="collapsed")
-st.markdown(
-    """
-    <style>
-    textarea {
-        font-family: 'Source Code Pro', 'Monaco', 'Cascadia Code', 'Ubuntu Mono', monospace !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+page_preamble()
 fetch_notifications()
 
-st.page_link("ExamUtils.py", label="Back to Main Menu", icon="🎓")
 st.title("Batch Create GitLab Projects")
 st.sidebar.header("BatchCreateGitLabProjects")
 st.write("Create GitLab projects as needed across your namespaces and groups in one go.")
 
 with st.expander("GitLab Configuration", expanded=True):
     is_authenticated = gitlab_config()
-
-# lock_ui = not is_authenticated
-# if lock_ui:
-#     st.info(
-#         "**Authentication Required:** Please provide valid configuration above to proceed.")
 
 st.write("### Namespace Selection")
 

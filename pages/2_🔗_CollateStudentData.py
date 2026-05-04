@@ -1,10 +1,11 @@
 import streamlit as st
-from utils.gitlab_config import gitlab_config
 
-st.set_page_config(
-    page_title="ExamTools",
-    page_icon="🎓",
-    initial_sidebar_state="collapsed")
+from utils.fetch_notifications import fetch_notifications
+from utils.gitlab_config import gitlab_config
+from utils.page_preamble import page_preamble
+
+page_preamble()
+fetch_notifications()
 
 st.title("Collate Student Data")
 st.sidebar.header("CollateStudentData")
