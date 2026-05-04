@@ -1,7 +1,5 @@
-from typing import Any, Dict
 import streamlit as st
 
-from utils.get_gitlab_namespaces import get_gitlab_namespaces
 from utils.get_gitlab_project_slug import get_gitlab_project_slug
 from utils.gitlab_config import gitlab_config
 from utils.namespace_selection import namespace_selection
