@@ -16,7 +16,7 @@ def page_preamble() -> None:
         unsafe_allow_html=True
     )
 
-    col1, col2 = st.columns(2, vertical_alignment="center", width=350, gap="xxsmall")
+    col1, col2, col3 = st.columns(3, vertical_alignment="center", width=550, gap="xsmall")
     with col1:
         st.page_link("ExamUtils.py", label="Back to Main Menu", icon="🎓")
     with col2:
@@ -24,5 +24,7 @@ def page_preamble() -> None:
             st.session_state.clear()
             st.cache_data.clear()
             st.rerun()
+    with col3:
+        st.caption("© 2026 Tobias Böhm")
 
     return None

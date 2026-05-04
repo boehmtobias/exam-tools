@@ -8,6 +8,7 @@ page_preamble()
 fetch_notifications()
 
 st.title("LLM Issue Feedback")
+st.caption("🚧 Work in progress")
 st.sidebar.header("LLMIssueFeedback")
 st.write("Generate feedback on student GitLab issues using LLMs.")
 

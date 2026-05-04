@@ -1,7 +1,11 @@
 [project]
 name = "exam-tools"
 version = "0.1.0"
-description = "Add your description here"
+description = "A collection of utilities for portfolio exams."
+readme = "README.md"
+authors = [
+  { name = "Tobias Böhm", email = "research@boehmt.de"},
+]
 requires-python = ">=3.9"
 dependencies = [
     "requests>=2.32.5",

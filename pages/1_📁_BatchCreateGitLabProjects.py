@@ -10,6 +10,7 @@ page_preamble()
 fetch_notifications()
 
 st.title("Batch Create GitLab Projects")
+st.caption("🚧 Work in progress")
 st.sidebar.header("BatchCreateGitLabProjects")
 st.write("Create GitLab projects as needed across your namespaces and groups in one go.")
 

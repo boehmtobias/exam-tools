@@ -8,6 +8,7 @@ page_preamble()
 fetch_notifications()
 
 st.title("Collate Student Data")
+st.caption("🚧 Work in progress")
 st.sidebar.header("CollateStudentData")
 st.write("Aggregate and organize student data from multiple sources.")
 

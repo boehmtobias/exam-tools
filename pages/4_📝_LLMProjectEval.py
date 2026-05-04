@@ -8,6 +8,7 @@ page_preamble()
 fetch_notifications()
 
 st.title("LLM Project Eval")
+st.caption("🚧 Work in progress")
 st.sidebar.header("LLMProjectEval")
 st.write("Evaluate student projects using LLMs and generate structured assessments.")
 

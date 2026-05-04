@@ -32,7 +32,7 @@ for i in range(st.session_state.ns_count):
     if i in st.session_state.ns_removed:
         continue
     with st.container(border=True):
-        st.write(f"#### Target Namespace {i + 1}")
+        st.write(f"#### Target Namespace #{i + 1}")
         ns = namespace_selection(is_auth=is_authenticated, key=i, exclude=already_selected)
         if i != 0 and st.button("❌", key=f"ns_remove_{i}"):
             st.session_state.ns_removed.add(i)
