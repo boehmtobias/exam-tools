@@ -1,5 +1,6 @@
 import streamlit as st
 
+from utils.fetch_notifications import fetch_notifications
 from utils.get_gitlab_project_slug import get_gitlab_project_slug
 from utils.gitlab_config import gitlab_config
 from utils.namespace_selection import namespace_selection
