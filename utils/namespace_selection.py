@@ -38,7 +38,7 @@ def namespace_selection(is_auth: bool, key: int = 0, exclude: list = None) -> di
                     )
 
                 with col2:
-                    if st.button("Refresh", key=f"ns_refresh_{key}"):
+                    if st.button("Refresh List", key=f"ns_refresh_{key}"):
                         get_gitlab_namespaces.clear()
                         st.session_state["_namespaces_refreshed"] = True
                         st.rerun()
@@ -76,7 +76,7 @@ def namespace_selection(is_auth: bool, key: int = 0, exclude: list = None) -> di
                          key=f"ns_selectbox_{key}")
 
         with col2:
-            st.button("Refresh",
+            st.button("Refresh List",
                       disabled=True,
                       key=f"ns_refresh_{key}")
 
