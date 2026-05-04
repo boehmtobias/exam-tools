@@ -1,10 +1,10 @@
 import streamlit as st
 
-from widgets.fetch_notifications import fetch_notifications
+from ui.fetch_notifications import fetch_notifications
 from utils.get_gitlab_project_slug import get_gitlab_project_slug
-from widgets.gitlab_config import gitlab_config
-from widgets.namespace_selection import namespace_selection
-from widgets.page_preamble import page_preamble
+from ui.gitlab_config import gitlab_config
+from ui.namespace_selection import namespace_selection
+from ui.page_preamble import page_preamble
 
 page_preamble()
 fetch_notifications()

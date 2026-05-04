@@ -1,8 +1,8 @@
 import streamlit as st
 
-from widgets.fetch_notifications import fetch_notifications
-from widgets.gitlab_config import gitlab_config
-from widgets.page_preamble import page_preamble
+from ui.fetch_notifications import fetch_notifications
+from ui.gitlab_config import gitlab_config
+from ui.page_preamble import page_preamble
 
 page_preamble()
 fetch_notifications()
