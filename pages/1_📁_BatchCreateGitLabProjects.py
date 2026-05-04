@@ -18,16 +18,12 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+fetch_notifications()
 
 st.page_link("ExamUtils.py", label="Back to Main Menu", icon="🎓")
 st.title("Batch Create GitLab Projects")
 st.sidebar.header("BatchCreateGitLabProjects")
 st.write("Create GitLab projects as needed across your namespaces and groups in one go.")
-
-# Toast message send upon page reload
-if st.session_state.get("_namespaces_refreshed"):
-    st.toast("Namespace list updated!")
-    del st.session_state["_namespaces_refreshed"]
 
 with st.expander("GitLab Configuration", expanded=True):
     is_authenticated = gitlab_config()
