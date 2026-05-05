@@ -12,7 +12,7 @@ A collection of utilities for portfolio exams and batch management of student Gi
 
 ## Requirements
 
-- Python >= 3.9
+- Python >= 3.12
 - Docker (for containerized deployment)
 
 ## Installation

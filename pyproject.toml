@@ -6,8 +6,8 @@ readme = "README.md"
 authors = [
   { name = "Tobias Böhm", email = "research@boehmt.de"},
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
     "requests>=2.32.5",
-    "streamlit>=1.50.0",
+    "streamlit>=1.57.0",
 ]
