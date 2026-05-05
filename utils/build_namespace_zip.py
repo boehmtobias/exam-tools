@@ -6,6 +6,7 @@ import streamlit as st
 
 from utils.get_namespace_repositories import get_namespace_repositories
 from utils.get_project_branches import get_project_branches
+from utils.get_project_commits import get_project_commits
 
 
 @st.cache_data(show_spinner=False)
@@ -25,6 +26,78 @@ def _download_branch_archive(base_url: str, token: str, project_id: int, branch_
         return None
 
     return response.content
+
+
+def _build_url_file(project_web_url: str) -> str:
+    """Return the contents of a Windows-compatible .url shortcut file."""
+    return f"[InternetShortcut]\nURL={project_web_url}\n"
+
+def _build_webloc_file(project_web_url: str) -> str:
+    """Return the contents of a macOS-compatible .webloc shortcut file."""
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"'
+        ' "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
+        '<plist version="1.0">\n'
+        '<dict>\n'
+        '    <key>URL</key>\n'
+        f'    <string>{project_web_url}</string>\n'
+        '</dict>\n'
+        '</plist>\n'
+    )
+
+
+def _build_commits_markdown(
+        project_name: str,
+        project_web_url: str,
+        commits_by_branch: dict[str, list[dict]],
+) -> str:
+    """
+    Render commits from all branches as a .md document.
+
+    Columns: #  |  Branch  |  SHA  |  Date  |  Author  |  Message
+    """
+    total = sum(len(c) for c in commits_by_branch.values())
+
+    lines: list[str] = [
+        f"# Commit History — {project_name}",
+        "",
+        f"Repository: {project_web_url}  ",
+        f"Total commits: {total}",
+        "",
+        "| # | Branch | SHA | Date | Author | Message |",
+        "|---|--------|-----|------|--------|---------|",
+    ]
+
+    idx = 1
+    all_commits: list[dict] = []
+
+    for branch_name, commits in commits_by_branch.items():
+        for c in commits:
+            author = c["author_name"].replace("|", "\\|")
+            first_line = c["message"].splitlines()[0].replace("|", "\\|") if c["message"] else ""
+            date = c["authored_date"][:10]
+            sha_link = f"[`{c['short_id']}`]({project_web_url}/-/commit/{c['id']})"
+
+            lines.append(f"| {idx} | `{branch_name}` | {sha_link} | {date} | {author} | {first_line} |")
+            idx += 1
+            all_commits.append(c)
+
+    # Full messages for multi-line commits
+    multi = [c for c in all_commits if len(c["message"].splitlines()) > 1]
+    if multi:
+        lines += ["", "---", "", "## Full Commit Messages", ""]
+        for c in multi:
+            lines += [
+                f"### `{c['short_id']}` — {c['authored_date'][:10]} — {c['author_name']}",
+                "",
+                "```",
+                c["message"],
+                "```",
+                "",
+            ]
+
+    return "\n".join(lines)
 
 
 def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int]:
@@ -47,6 +120,7 @@ def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int
         for i, project in enumerate(repos):
             repo_name = project["path"]
             project_id = project["id"]
+            project_web_url = project.get("web_url", "")
             project_count += 1
 
             branches = get_project_branches(base_url, token, project_id)
@@ -56,6 +130,18 @@ def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int
                 master_zip.writestr(f"{repo_name}/.empty", "")
                 continue
 
+            # Write web link shortcuts
+            if project_web_url:
+                master_zip.writestr(
+                    f"{repo_name}/{repo_name}.url",
+                    _build_url_file(project_web_url),
+                )
+                master_zip.writestr(
+                    f"{repo_name}/{repo_name}.webloc",
+                    _build_webloc_file(project_web_url),
+                )
+
+            commits_by_branch = {}
             for branch in branches:
                 branch_name = branch["name"]
                 progress.progress(
@@ -80,6 +166,18 @@ def build_namespace_zip(base_url: str, token: str, ns: dict) -> tuple[bytes, int
 
                         target_path = f"{repo_name}/{branch_name}/{inner_path}"
                         master_zip.writestr(target_path, branch_zip.read(entry))
+
+                commits_by_branch[branch_name] = get_project_commits(
+                    base_url, token, project_id, branch_name
+                )
+
+            if commits_by_branch:
+                commits_md = _build_commits_markdown(
+                    project_name=repo_name,
+                    project_web_url=project_web_url,
+                    commits_by_branch=commits_by_branch,
+                )
+                master_zip.writestr(f"{repo_name}/COMMITS.md", commits_md)
 
     progress.empty()
     master_buffer.seek(0)
